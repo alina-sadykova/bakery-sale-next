@@ -4,6 +4,8 @@ import { ThemeProvider } from "@mui/material/styles";
 import "./globals.css";
 import { theme } from "@/components/common/theme";
 import AuthContextProvider from "@/contexts/AuthContext";
+import NavBar from "@/components/navBar";
+import MainLayout from "@/layouts";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -20,9 +22,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <AuthContextProvider>
-          <ThemeProvider theme={theme}>{children}</ThemeProvider>
-        </AuthContextProvider>
+        <MainLayout>{children}</MainLayout>
       </body>
     </html>
   );

@@ -15,17 +15,19 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { authSchema } from "./schema";
 import { LoginInput } from "@/contexts/AuthContext/types";
 import { useAuthContext } from "@/contexts/AuthContext";
-
+import { useRouter } from "next/navigation";
+import { Alert, IconButton } from "@mui/material";
+import CloseIcon from "@mui/icons-material/Close";
 export default function AuthForm() {
   const [isLogin, setIsLogin] = React.useState(true);
-  const { login, register, user } = useAuthContext();
+  const { login, register, user, error, resetError } = useAuthContext();
   const { handleSubmit, control } = useForm<LoginInput>({
     resolver: yupResolver(authSchema),
     mode: "onChange",
   });
+  const router = useRouter();
 
   function onSubmit(data: LoginInput) {
-    console.log(data);
     if (isLogin) {
       login(data);
     } else {
@@ -37,6 +39,10 @@ export default function AuthForm() {
     setIsLogin((prev) => !prev);
   }
 
+  if (user) {
+    router.replace("/"); //navigates to the main page. replace does not save the current page history
+    return null;
+  }
   return (
     <Container component="main" maxWidth="xs">
       <CssBaseline />
@@ -54,6 +60,7 @@ export default function AuthForm() {
         <Typography component="h1" variant="h5">
           {isLogin ? "Sign in" : "Sign up"}
         </Typography>
+
         <Box
           component="form"
           onSubmit={handleSubmit(onSubmit)}
@@ -124,6 +131,24 @@ export default function AuthForm() {
             </Grid>
           </Grid>
         </Box>
+        {error && (
+          <Alert
+            severity="error"
+            sx={{
+              position: "fixed",
+              left: "50%",
+              top: "50px",
+              transform: "translateX(-50%)",
+              display: "flex",
+              alignItems: "center",
+            }}
+          >
+            {error.code}
+            <IconButton onClick={resetError} sx={{ padding: "0", ml: 2 }}>
+              <CloseIcon sx={{ fontSize: "20px" }}></CloseIcon>
+            </IconButton>
+          </Alert>
+        )}
       </Box>
     </Container>
   );
