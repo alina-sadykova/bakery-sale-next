@@ -33,6 +33,7 @@ export const useAuthContext = () => useContext(authContext);
 const AuthContextProvider: FC<ContextProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [error, setError] = useState<FirebaseError | null>(null);
+
   async function register({ email, password }: LoginInput) {
     try {
       await createUserWithEmailAndPassword(auth, email, password);
