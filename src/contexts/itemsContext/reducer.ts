@@ -1,7 +1,8 @@
+import { Item } from "@/models/item";
 import { ItemsActionTypes, ItemsActions } from "./actions";
 
-interface InitialState {
-  items: [];
+export interface InitialState {
+  items: Item[];
   loading: boolean;
   error: null | string;
 }
@@ -21,6 +22,8 @@ export function itemsReducer(
       return { ...state, items: action.items, loading: false };
     case ItemsActionTypes.GET_ITEMS_ERROR:
       return { ...state, error: action.error, loading: false };
+    case ItemsActionTypes.RESET_ERROR:
+      return { ...state, error: null };
     default:
       return state;
   }
