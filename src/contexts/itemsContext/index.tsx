@@ -4,6 +4,7 @@ import {
   getItemsError,
   getItemsRequest,
   getItemsSuccess,
+  getOneItemSuccess,
   resetError,
 } from "./actions";
 import axios from "axios";
@@ -13,6 +14,7 @@ import { BASE_URL } from "./consts";
 interface ItemContext extends InitialState {
   getProducts: () => void;
   handleResetError: () => void;
+  getOneProduct: (id: string) => void;
 }
 // HOW TO CREATE CONTEXT:
 const itemContext = createContext<ItemContext>({} as ItemContext); // 1.create context
@@ -25,9 +27,22 @@ const ItemsContextProvider: FC<ContextProps> = ({ children }) => {
   async function getProducts() {
     try {
       dispatch(getItemsRequest()); // loading
+
       const response = await axios.get(`${BASE_URL}/items`); // API call
-      console.log(response.data);
+
       dispatch(getItemsSuccess(response.data));
+    } catch (error: any) {
+      dispatch(getItemsError(error.message as string));
+    }
+  }
+
+  async function getOneProduct(id: string) {
+    try {
+      dispatch(getItemsRequest()); // loading
+
+      const { data } = await axios.get(`${BASE_URL}/items/${id}`); // API call
+
+      dispatch(getOneItemSuccess(data));
     } catch (error: any) {
       dispatch(getItemsError(error.message as string));
     }
@@ -38,10 +53,12 @@ const ItemsContextProvider: FC<ContextProps> = ({ children }) => {
   };
   const value = {
     items: state.items,
+    oneItem: state.oneItem,
     loading: state.loading,
     error: state.error,
     getProducts,
     handleResetError,
+    getOneProduct,
   };
   return <itemContext.Provider value={value}>{children}</itemContext.Provider>; // 3.wrap with the provider
 };

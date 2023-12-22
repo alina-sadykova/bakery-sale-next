@@ -3,14 +3,18 @@ import { ItemsActionTypes, ItemsActions } from "./actions";
 
 export interface InitialState {
   items: Item[];
+  oneItem: null | Item;
   loading: boolean;
   error: null | string;
 }
+
 export const initialState: InitialState = {
   items: [],
+  oneItem: null,
   loading: false,
   error: null,
 };
+
 export function itemsReducer(
   state = initialState,
   action: ItemsActions
@@ -18,12 +22,19 @@ export function itemsReducer(
   switch (action.type) {
     case ItemsActionTypes.GET_ITEMS_REQUEST:
       return { ...state, loading: true };
+
     case ItemsActionTypes.GET_ITEMS_SUCCESS:
       return { ...state, items: action.items, loading: false };
+
+    case ItemsActionTypes.GET_ONE_ITEM_SUCCESS:
+      return { ...state, oneItem: action.item, loading: false };
+
     case ItemsActionTypes.GET_ITEMS_ERROR:
       return { ...state, error: action.error, loading: false };
+
     case ItemsActionTypes.RESET_ERROR:
       return { ...state, error: null };
+
     default:
       return state;
   }

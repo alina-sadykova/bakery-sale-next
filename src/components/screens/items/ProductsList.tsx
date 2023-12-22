@@ -9,24 +9,32 @@ import ErrorModal from "@/components/common/errorModal";
 function ProductsList() {
   const { error, loading, items, getProducts, handleResetError } =
     useItemContext();
+
   useEffect(() => {
     getProducts();
   }, []);
-  console.log(items);
+
   return (
-    <Box>
-      <Box>
+    <>
+      <Box
+        display="flex"
+        justifyContent="space-between"
+        alignItems="center"
+        gap="20px"
+      >
         {items.map((item) => (
           <ProductItem item={item} key={item.id} />
         ))}
-        {loading && <Loading />}
-        <ErrorModal
-          message={`${error}`}
-          open={!!error}
-          onClose={handleResetError}
-        />
       </Box>
-    </Box>
+
+      {loading && <Loading />}
+
+      <ErrorModal
+        message={`${error}`}
+        open={!!error}
+        onClose={handleResetError}
+      />
+    </>
   );
 }
 

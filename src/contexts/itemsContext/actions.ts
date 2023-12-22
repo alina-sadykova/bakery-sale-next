@@ -3,6 +3,7 @@ import { Item } from "@/models/item";
 export enum ItemsActionTypes {
   GET_ITEMS_REQUEST = "GET_ITEMS_REQUEST",
   GET_ITEMS_SUCCESS = "GET_ITEMS_SUCCESS",
+  GET_ONE_ITEM_SUCCESS = "GET_ONE_ITEM_SUCCESS",
   GET_ITEMS_ERROR = "GET_ITEMS_ERROR",
   RESET_ERROR = "RESET_ERROR",
 }
@@ -14,6 +15,11 @@ interface GetItemsRequest {
 interface GetItemsSuccess {
   type: ItemsActionTypes.GET_ITEMS_SUCCESS;
   items: Item[];
+}
+
+interface GetOneItemSuccess {
+  type: ItemsActionTypes.GET_ONE_ITEM_SUCCESS;
+  item: Item;
 }
 
 interface GetItemsError {
@@ -29,7 +35,8 @@ export type ItemsActions =
   | GetItemsRequest
   | GetItemsSuccess
   | GetItemsError
-  | ResetError;
+  | ResetError
+  | GetOneItemSuccess;
 
 export function getItemsRequest(): GetItemsRequest {
   return {
@@ -41,6 +48,13 @@ export function getItemsSuccess(items: Item[]): GetItemsSuccess {
   return {
     type: ItemsActionTypes.GET_ITEMS_SUCCESS,
     items,
+  };
+}
+
+export function getOneItemSuccess(item: Item): GetOneItemSuccess {
+  return {
+    type: ItemsActionTypes.GET_ONE_ITEM_SUCCESS,
+    item,
   };
 }
 

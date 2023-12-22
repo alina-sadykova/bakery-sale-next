@@ -15,32 +15,32 @@ import MenuItem from "@mui/material/MenuItem";
 import AdbIcon from "@mui/icons-material/Adb";
 import { useAuthContext } from "@/contexts/AuthContext";
 import Link from "next/link";
-
-const pages = ["Products", "Pricing", "Blog"];
-const settings = ["Profile", "Account", "Dashboard", "Logout"];
+import { pages } from "./data";
+import { usePathname } from "next/navigation";
 
 function NavBar() {
   const { user, logout } = useAuthContext();
+  const pathname = usePathname();
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-    null
-  );
-  const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
     null
   );
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
-  const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
-  };
 
   const handleCloseNavMenu = () => {
     setAnchorElNav(null);
   };
 
-  const handleCloseUserMenu = () => {
-    setAnchorElUser(null);
+  const getNavbarLinkStyles = (link: string) => {
+    if (link === pathname) {
+      return {
+        border: "0.5px white solid",
+      };
+    } else {
+      return {};
+    }
   };
 
   return (
@@ -96,8 +96,13 @@ function NavBar() {
               }}
             >
               {pages.map((page) => (
-                <MenuItem key={page} onClick={handleCloseNavMenu}>
-                  <Typography textAlign="center">{page}</Typography>
+                <MenuItem
+                  key={page.title}
+                  href={page.href}
+                  component={Link}
+                  onClick={handleCloseNavMenu}
+                >
+                  <Typography textAlign="center">{page.title}</Typography>
                 </MenuItem>
               ))}
             </Menu>
@@ -124,11 +129,18 @@ function NavBar() {
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
               <Button
-                key={page}
+                key={page.title}
+                href={page.href}
+                component={Link}
                 onClick={handleCloseNavMenu}
-                sx={{ my: 2, color: "white", display: "block" }}
+                sx={{
+                  my: 2,
+                  color: "white",
+                  display: "block",
+                  ...getNavbarLinkStyles(page.href),
+                }}
               >
-                {page}
+                {page.title}
               </Button>
             ))}
           </Box>

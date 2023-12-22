@@ -7,6 +7,7 @@ import {
   CardMedia,
   Typography,
 } from "@mui/material";
+import Link from "next/link";
 import React from "react";
 
 interface ProductItemProps {
@@ -27,7 +28,9 @@ function ProductItem({ item }: ProductItemProps) {
       </CardContent>
       <CardActions>
         <Button size="small">Share</Button>
-        <Button size="small">Learn More</Button>
+        <Button component={Link} href={`/items/${item.id}`} size="small">
+          Learn More
+        </Button>
       </CardActions>
     </Card>
   );
