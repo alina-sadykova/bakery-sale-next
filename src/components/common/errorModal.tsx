@@ -21,6 +21,7 @@ interface ErrorModalProps {
   open: boolean;
   onClose: () => void;
 }
+
 export default function ErrorModal({
   message,
   open,
