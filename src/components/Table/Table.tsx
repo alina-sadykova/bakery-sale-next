@@ -21,6 +21,8 @@ import Switch from "@mui/material/Switch";
 import DeleteIcon from "@mui/icons-material/Delete";
 import FilterListIcon from "@mui/icons-material/FilterList";
 import { visuallyHidden } from "@mui/utils";
+import Loading from "../common/loading";
+import { itemsReducer } from "@/contexts/itemsContext/reducer";
 
 function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
   if (b[orderBy] < a[orderBy]) {
@@ -187,6 +189,8 @@ function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
 interface TableProps<T> {
   rows: T[];
   headCells: HeadCell<T>[];
+  loading: boolean;
+  emptyMessage: string;
 }
 
 interface HeadCell<T> {
@@ -199,6 +203,8 @@ interface HeadCell<T> {
 export default function Table<T extends { id: string }>({
   rows,
   headCells,
+  loading,
+  emptyMessage,
 }: TableProps<T>) {
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof T>(headCells[0].id);
@@ -258,11 +264,14 @@ export default function Table<T extends { id: string }>({
   const visibleRows = React.useMemo(
     // to cache
     () =>
-      rows.sort(getComparator(order, orderBy)).slice(
-        page * rowsPerPage, //0 X 5 = 0 , 1 X 5 = 5
-        page * rowsPerPage + rowsPerPage // 0 X 5 + 5 = 5 ,10
-      ),
-    [order, orderBy, page, rowsPerPage]
+      rows
+        .slice()
+        .sort(getComparator(order, orderBy))
+        .slice(
+          page * rowsPerPage, //0 X 5 = 0 , 1 X 5 = 5
+          page * rowsPerPage + rowsPerPage // 0 X 5 + 5 = 5 ,10
+        ),
+    [order, orderBy, page, rowsPerPage, rows]
   );
 
   return (
@@ -285,50 +294,58 @@ export default function Table<T extends { id: string }>({
               headCells={headCells}
             />
             <TableBody>
-              {visibleRows.map((row, index) => {
-                const isItemSelected = isSelected(row.id);
-                const labelId = `enhanced-table-checkbox-${index}`;
+              {loading ? (
+                // <Loading />
+                <h1>Loading...</h1>
+              ) : (
+                visibleRows.map((row, index) => {
+                  const isItemSelected = isSelected(row.id);
+                  const labelId = `enhanced-table-checkbox-${index}`;
 
-                return (
-                  <TableRow
-                    hover
-                    onClick={(event) => handleClick(event, row.id)}
-                    role="checkbox"
-                    aria-checked={isItemSelected}
-                    tabIndex={-1}
-                    key={row.id}
-                    selected={isItemSelected}
-                    sx={{ cursor: "pointer" }}
-                  >
-                    <TableCell padding="checkbox">
-                      <Checkbox
-                        color="primary"
-                        checked={isItemSelected}
-                        inputProps={{
-                          "aria-labelledby": labelId,
-                        }}
-                      />
-                    </TableCell>
+                  return (
+                    <TableRow
+                      hover
+                      onClick={(event) => handleClick(event, row.id)}
+                      role="checkbox"
+                      aria-checked={isItemSelected}
+                      tabIndex={-1}
+                      key={row.id}
+                      selected={isItemSelected}
+                      sx={{ cursor: "pointer" }}
+                    >
+                      <TableCell padding="checkbox">
+                        <Checkbox
+                          color="primary"
+                          checked={isItemSelected}
+                          inputProps={{
+                            "aria-labelledby": labelId,
+                          }}
+                        />
+                      </TableCell>
 
-                    {headCells.map((headCell, index) =>
-                      index === 0 ? (
-                        <TableCell
-                          component="th"
-                          id={labelId}
-                          scope="row"
-                          padding="none"
-                        >
-                          {row[headCell.id] as string}
-                        </TableCell>
-                      ) : (
-                        <TableCell align="right">
-                          {row[headCell.id] as string}
-                        </TableCell>
-                      )
-                    )}
-                  </TableRow>
-                );
-              })}
+                      {headCells.map((headCell, index) =>
+                        index === 0 ? (
+                          <TableCell
+                            component="th"
+                            id={labelId}
+                            scope="row"
+                            padding="none"
+                          >
+                            {row[headCell.id] as string}
+                          </TableCell>
+                        ) : (
+                          <TableCell
+                            align={headCell.numeric ? "right" : "left"}
+                          >
+                            {row[headCell.id] as string}
+                          </TableCell>
+                        )
+                      )}
+                    </TableRow>
+                  );
+                })
+              )}
+
               {emptyRows > 0 && (
                 <TableRow
                   style={{
