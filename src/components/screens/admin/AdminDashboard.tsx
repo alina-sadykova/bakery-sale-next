@@ -2,6 +2,7 @@
 import Table from "@/components/Table/Table";
 import { useItemContext } from "@/contexts/itemsContext";
 import { Item } from "@/models/item";
+import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 interface HeadCell {
@@ -41,7 +42,7 @@ const headCells: HeadCell[] = [
 const AdminDashboard = () => {
   const { error, loading, items, getProducts, handleResetError } =
     useItemContext();
-
+  const router = useRouter();
   useEffect(() => {
     getProducts();
   }, []);
@@ -49,6 +50,11 @@ const AdminDashboard = () => {
   const getImage = (item: Item) => {
     return <img src={item.image} alt={item.title} width={"50px"} />;
   };
+
+  const handleCreateCar = () => {
+    router.push("/admin/create-car");
+  };
+
   return (
     <div>
       <Table
@@ -56,6 +62,8 @@ const AdminDashboard = () => {
         headCells={headCells}
         loading={loading}
         emptyMessage={"No cars in storage"}
+        tableName={"Cars"}
+        onCreate={handleCreateCar}
       />
     </div>
   );

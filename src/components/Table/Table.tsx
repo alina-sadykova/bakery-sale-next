@@ -1,203 +1,26 @@
 "use client";
 import * as React from "react";
-import { alpha } from "@mui/material/styles";
 import Box from "@mui/material/Box";
 import MUITable from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import TableSortLabel from "@mui/material/TableSortLabel";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import Paper from "@mui/material/Paper";
 import Checkbox from "@mui/material/Checkbox";
-import IconButton from "@mui/material/IconButton";
-import Tooltip from "@mui/material/Tooltip";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Switch from "@mui/material/Switch";
-import DeleteIcon from "@mui/icons-material/Delete";
-import FilterListIcon from "@mui/icons-material/FilterList";
-import { visuallyHidden } from "@mui/utils";
-import Loading from "../common/loading";
-import { itemsReducer } from "@/contexts/itemsContext/reducer";
-
-function descendingComparator<T>(a: T, b: T, orderBy: keyof T) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
-  return 0;
-}
-
-type Order = "asc" | "desc";
-
-function getComparator<T>(
-  order: Order,
-  orderBy: keyof T
-): (a: T, b: T) => number {
-  return order === "desc"
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
-}
-
-// Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
-// stableSort() brings sort stability to non-modern browsers (notably IE11). If you
-// only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
-// with exampleArray.slice().sort(exampleComparator)
-function stableSort<T>(
-  array: readonly T[],
-  comparator: (a: T, b: T) => number
-) {
-  const stabilizedThis = array.map((el, index) => [el, index] as [T, number]);
-  stabilizedThis.sort((a, b) => {
-    const order = comparator(a[0], b[0]);
-    if (order !== 0) {
-      return order;
-    }
-    return a[1] - b[1];
-  });
-  return stabilizedThis.map((el) => el[0]);
-}
-
-interface EnhancedTableProps<T> {
-  numSelected: number;
-  onRequestSort: (event: React.MouseEvent<unknown>, property: keyof T) => void;
-  onSelectAllClick: (event: React.ChangeEvent<HTMLInputElement>) => void;
-  order: Order;
-  orderBy: keyof T;
-  rowCount: number;
-  headCells: HeadCell<T>[];
-}
-
-function EnhancedTableHead<T>(props: EnhancedTableProps<T>) {
-  const {
-    onSelectAllClick,
-    order,
-    orderBy,
-    numSelected,
-    rowCount,
-    onRequestSort,
-    headCells,
-  } = props;
-  const createSortHandler =
-    (property: keyof T) => (event: React.MouseEvent<unknown>) => {
-      onRequestSort(event, property);
-    };
-
-  return (
-    <TableHead>
-      <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-            inputProps={{
-              "aria-label": "select all desserts",
-            }}
-          />
-        </TableCell>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id as string}
-            align={headCell.numeric ? "right" : "left"}
-            padding={headCell.disablePadding ? "none" : "normal"}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
-                </Box>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
-}
-
-interface EnhancedTableToolbarProps {
-  numSelected: number;
-}
-
-function EnhancedTableToolbar(props: EnhancedTableToolbarProps) {
-  const { numSelected } = props;
-
-  return (
-    <Toolbar
-      sx={{
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
-          bgcolor: (theme) =>
-            alpha(
-              theme.palette.primary.main,
-              theme.palette.action.activatedOpacity
-            ),
-        }),
-      }}
-    >
-      {numSelected > 0 ? (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
-          {numSelected} selected
-        </Typography>
-      ) : (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          Nutrition
-        </Typography>
-      )}
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <Tooltip title="Filter list">
-          <IconButton>
-            <FilterListIcon />
-          </IconButton>
-        </Tooltip>
-      )}
-    </Toolbar>
-  );
-}
+import TableToolbar from "./TableToolbar";
+import TableHead from "./TableHead";
+import { Paper } from "@mui/material";
+import { getComparator } from "./helper";
+import { HeadCell, Order } from "./types";
 
 interface TableProps<T> {
   rows: T[];
   headCells: HeadCell<T>[];
   loading: boolean;
   emptyMessage: string;
-}
-
-interface HeadCell<T> {
-  disablePadding: boolean;
-  id: keyof T;
-  label: string;
-  numeric: boolean;
+  onCreate: () => void;
+  tableName: string;
 }
 
 export default function Table<T extends { id: string }>({
@@ -205,6 +28,8 @@ export default function Table<T extends { id: string }>({
   headCells,
   loading,
   emptyMessage,
+  onCreate,
+  tableName,
 }: TableProps<T>) {
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof T>(headCells[0].id);
@@ -277,14 +102,18 @@ export default function Table<T extends { id: string }>({
   return (
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
-        <EnhancedTableToolbar numSelected={selected.length} />
+        <TableToolbar
+          numSelected={selected.length}
+          onCreate={onCreate}
+          tableName={tableName}
+        />
         <TableContainer>
           <MUITable
             sx={{ minWidth: 750 }}
             aria-labelledby="tableTitle"
             size={"medium"}
           >
-            <EnhancedTableHead
+            <TableHead
               numSelected={selected.length}
               order={order}
               orderBy={orderBy}

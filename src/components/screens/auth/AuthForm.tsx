@@ -18,6 +18,7 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import { Alert, IconButton } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
+
 export default function AuthForm() {
   const [isLogin, setIsLogin] = React.useState(true);
   const { login, register, user, error, resetError } = useAuthContext();
