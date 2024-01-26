@@ -13,6 +13,7 @@ import TableHead from "./TableHead";
 import { Paper } from "@mui/material";
 import { getComparator } from "./helper";
 import { HeadCell, Order } from "./types";
+import Loading from "../common/loading";
 
 interface TableProps<T> {
   rows: T[];
@@ -124,9 +125,12 @@ export default function Table<T extends { id: string }>({
             />
             <TableBody>
               {loading ? (
-                // <Loading />
-                <h1>Loading...</h1>
-              ) : (
+                <TableRow>
+                  <TableCell colSpan={6}>
+                    <Loading />
+                  </TableCell>
+                </TableRow>
+              ) : rows.length > 0 ? (
                 visibleRows.map((row, index) => {
                   const isItemSelected = isSelected(row.id);
                   const labelId = `enhanced-table-checkbox-${index}`;
@@ -173,6 +177,12 @@ export default function Table<T extends { id: string }>({
                     </TableRow>
                   );
                 })
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={6} align="center">
+                    {emptyMessage}
+                  </TableCell>
+                </TableRow>
               )}
 
               {emptyRows > 0 && (

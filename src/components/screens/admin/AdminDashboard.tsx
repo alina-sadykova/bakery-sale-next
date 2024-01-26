@@ -43,6 +43,7 @@ const AdminDashboard = () => {
   const { error, loading, items, getProducts, handleResetError } =
     useItemContext();
   const router = useRouter();
+
   useEffect(() => {
     getProducts();
   }, []);

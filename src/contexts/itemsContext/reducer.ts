@@ -11,7 +11,7 @@ export interface InitialState {
 export const initialState: InitialState = {
   items: [],
   oneItem: null,
-  loading: false,
+  loading: true,
   error: null,
 };
 

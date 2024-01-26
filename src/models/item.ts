@@ -6,8 +6,16 @@ export interface Item {
   category: ItemCategory;
 }
 
+export type ItemWithoutId = Omit<Item, "id">;
+
 enum ItemCategory { // enum when we have a few options
   sedan = "sedan",
   suv = "suv",
   truck = "truck",
 }
+
+export const itemCategories = [
+  ItemCategory.sedan,
+  ItemCategory.suv,
+  ItemCategory.truck,
+];
