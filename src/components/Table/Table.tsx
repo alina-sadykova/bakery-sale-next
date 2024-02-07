@@ -21,6 +21,8 @@ interface TableProps<T> {
   loading: boolean;
   emptyMessage: string;
   onCreate: () => void;
+  onDelete: (selectedRows: T[]) => void;
+  onEdit: (selectedRow: T) => void;
   tableName: string;
 }
 
@@ -30,11 +32,13 @@ export default function Table<T extends { id: string }>({
   loading,
   emptyMessage,
   onCreate,
+  onDelete,
+  onEdit,
   tableName,
 }: TableProps<T>) {
   const [order, setOrder] = React.useState<Order>("asc");
   const [orderBy, setOrderBy] = React.useState<keyof T>(headCells[0].id);
-  const [selected, setSelected] = React.useState<readonly string[]>([]);
+  const [selected, setSelected] = React.useState<T[]>([]);
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
 
@@ -49,15 +53,16 @@ export default function Table<T extends { id: string }>({
 
   const handleSelectAllClick = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.checked) {
-      const newSelected = rows.map((n) => n.id);
-      setSelected(newSelected);
+      setSelected(rows);
       return;
     }
     setSelected([]);
   };
 
-  const handleClick = (event: React.MouseEvent<unknown>, id: string) => {
-    const filteredSelected = selected.filter((selectedId) => selectedId !== id);
+  const handleClick = (event: React.MouseEvent<unknown>, row: T) => {
+    const filteredSelected = selected.filter(
+      (selectedRow) => selectedRow.id !== row.id
+    );
 
     //find: return first element which meets the condition.
     //filter: return new array, return length less or equal elements that met condition.
@@ -66,7 +71,7 @@ export default function Table<T extends { id: string }>({
     if (filteredSelected.length < selected.length) {
       setSelected(filteredSelected);
     } else {
-      setSelected(filteredSelected.concat(id));
+      setSelected(filteredSelected.concat(row));
     }
   };
 
@@ -81,7 +86,8 @@ export default function Table<T extends { id: string }>({
     setPage(0);
   };
 
-  const isSelected = (id: string) => selected.indexOf(id) !== -1;
+  const isSelected = (id: string) =>
+    selected.findIndex((selectedRow) => selectedRow.id === id) !== -1;
 
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
@@ -104,8 +110,10 @@ export default function Table<T extends { id: string }>({
     <Box sx={{ width: "100%" }}>
       <Paper sx={{ width: "100%", mb: 2 }}>
         <TableToolbar
-          numSelected={selected.length}
+          selected={selected}
           onCreate={onCreate}
+          onDelete={onDelete}
+          onEdit={onEdit}
           tableName={tableName}
         />
         <TableContainer>
@@ -138,7 +146,7 @@ export default function Table<T extends { id: string }>({
                   return (
                     <TableRow
                       hover
-                      onClick={(event) => handleClick(event, row.id)}
+                      onClick={(event) => handleClick(event, row)}
                       role="checkbox"
                       aria-checked={isItemSelected}
                       tabIndex={-1}

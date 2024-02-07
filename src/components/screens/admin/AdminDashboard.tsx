@@ -56,6 +56,14 @@ const AdminDashboard = () => {
     router.push("/admin/create-car");
   };
 
+  const handleDeleteCar = (selectedCars: Item[]) => {
+    console.log("delete", selectedCars);
+  };
+
+  const handleEditCar = (selectedCar: Item) => {
+    router.push(`/admin/edit-car/${selectedCar.id}`);
+  };
+
   return (
     <div>
       <Table
@@ -65,6 +73,8 @@ const AdminDashboard = () => {
         emptyMessage={"No cars in storage"}
         tableName={"Cars"}
         onCreate={handleCreateCar}
+        onDelete={handleDeleteCar}
+        onEdit={handleEditCar}
       />
     </div>
   );

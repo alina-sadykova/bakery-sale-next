@@ -6,16 +6,20 @@ import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
 import Tooltip from "@mui/material/Tooltip";
 import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
 
-interface TableToolbarProps {
-  numSelected: number;
+interface TableToolbarProps<T> {
+  selected: T[];
   onCreate: () => void;
+  onDelete: (selectedRows: T[]) => void;
+  onEdit: (selectedRow: T) => void;
   tableName: string;
 }
 
-export default function TableToolbar(props: TableToolbarProps) {
-  const { numSelected, onCreate, tableName } = props;
+export default function TableToolbar<T>(props: TableToolbarProps<T>) {
+  const { selected, onCreate, onDelete, onEdit, tableName } = props;
+  const numSelected = selected.length;
 
   return (
     <Toolbar
@@ -50,9 +54,22 @@ export default function TableToolbar(props: TableToolbarProps) {
           {tableName}
         </Typography>
       )}
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
+      {numSelected > 0 && numSelected < 2 ? (
+        <>
+          <Tooltip title="Delete Selected Car">
+            <IconButton onClick={() => onDelete(selected)}>
+              <DeleteIcon />
+            </IconButton>
+          </Tooltip>
+          <Tooltip title="Edit Selected Car">
+            <IconButton onClick={() => onEdit(selected[0])}>
+              <EditIcon />
+            </IconButton>
+          </Tooltip>
+        </>
+      ) : numSelected > 1 ? (
+        <Tooltip title="Delete All Selected Cars">
+          <IconButton onClick={() => onDelete(selected)}>
             <DeleteIcon />
           </IconButton>
         </Tooltip>

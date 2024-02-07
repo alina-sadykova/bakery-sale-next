@@ -10,11 +10,13 @@ import {
 import axios from "axios";
 import { ContextProps } from "../AuthContext/types";
 import { BASE_URL } from "./consts";
+import { ItemWithoutId } from "@/models/item";
 
 interface ItemContext extends InitialState {
   getProducts: () => void;
   handleResetError: () => void;
   getOneProduct: (id: string) => void;
+  createCar: (carData: ItemWithoutId) => void;
 }
 // HOW TO CREATE CONTEXT:
 const itemContext = createContext<ItemContext>({} as ItemContext); // 1.create context
@@ -51,6 +53,17 @@ const ItemsContextProvider: FC<ContextProps> = ({ children }) => {
   const handleResetError = () => {
     dispatch(resetError());
   };
+
+  const createCar = async (carData: ItemWithoutId) => {
+    try {
+      const { data } = await axios.post(`${BASE_URL}/items`, carData);
+      getProducts();
+      return data;
+    } catch (error: any) {
+      dispatch(getItemsError(error.message as string));
+    }
+  };
+
   const value = {
     items: state.items,
     oneItem: state.oneItem,
@@ -59,6 +72,7 @@ const ItemsContextProvider: FC<ContextProps> = ({ children }) => {
     getProducts,
     handleResetError,
     getOneProduct,
+    createCar,
   };
   return <itemContext.Provider value={value}>{children}</itemContext.Provider>; // 3.wrap with the provider
 };

@@ -14,11 +14,20 @@ import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useAuthContext } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
-import { Alert, IconButton } from "@mui/material";
+import {
+  Alert,
+  FormControl,
+  FormHelperText,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import { authSchema } from "../auth/schema";
 import { createCarSchema } from "./schema";
-import { ItemWithoutId } from "@/models/item";
+import { ItemWithoutId, itemCategories } from "@/models/item";
+import { useItemContext } from "@/contexts/itemsContext";
 
 function CreateCar() {
   const { handleSubmit, control } = useForm<ItemWithoutId>({
@@ -26,9 +35,11 @@ function CreateCar() {
     mode: "onChange",
   });
   const router = useRouter();
+  const { createCar } = useItemContext();
 
-  function onSubmit(data: ItemWithoutId) {
-    console.log(data);
+  async function onSubmit(data: ItemWithoutId) {
+    await createCar(data);
+    router.back();
   }
 
   return (
@@ -67,6 +78,7 @@ function CreateCar() {
               error={invalid}
               // error={!!error} //error = {} -> true, error = undefined -> false
               helperText={error?.message}
+              placeholder="Make and model of a car"
             />
           )}
         />
@@ -80,12 +92,13 @@ function CreateCar() {
               required
               fullWidth
               name="image"
-              label="Image"
+              label="Image URL"
               type="text"
               id="image"
               autoComplete="image"
               error={invalid}
               helperText={error?.message}
+              placeholder="Pass a link to your image"
             />
           )}
         />
@@ -106,6 +119,32 @@ function CreateCar() {
               error={invalid}
               helperText={error?.message}
             />
+          )}
+        />
+        <Controller
+          name="category"
+          control={control}
+          render={({ field, fieldState: { error, invalid } }) => (
+            <FormControl sx={{ my: 2, width: "100%", minWidth: 120 }}>
+              <InputLabel id="category-select-label">Category</InputLabel>
+              <Select
+                labelId="category-select-label"
+                id="category-select"
+                label="Category"
+                sx={{ textTransform: "capitalize" }}
+                {...field}
+              >
+                {itemCategories.map((item) => (
+                  <MenuItem value={item} sx={{ textTransform: "capitalize" }}>
+                    {/* {item[0].toUpperCase() + item.slice(1)} */}
+                    {item}
+                  </MenuItem>
+                ))}
+              </Select>
+              {invalid && (
+                <FormHelperText error>{error?.message}</FormHelperText>
+              )}
+            </FormControl>
           )}
         />
         <Button
