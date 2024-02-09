@@ -17,6 +17,7 @@ interface ItemContext extends InitialState {
   handleResetError: () => void;
   getOneProduct: (id: string) => void;
   createCar: (carData: ItemWithoutId) => void;
+  deleteCars: (carIds: string[]) => void;
 }
 // HOW TO CREATE CONTEXT:
 const itemContext = createContext<ItemContext>({} as ItemContext); // 1.create context
@@ -64,6 +65,18 @@ const ItemsContextProvider: FC<ContextProps> = ({ children }) => {
     }
   };
 
+  const deleteCars = async (carIDs: string[]) => {
+    try {
+      const response = await Promise.all(
+        carIDs.map((id) => axios.delete(`${BASE_URL}/items/${id}`))
+      );
+      console.log(response);
+      getProducts();
+    } catch (error: any) {
+      dispatch(getItemsError(error.message as string));
+    }
+  };
+
   const value = {
     items: state.items,
     oneItem: state.oneItem,
@@ -73,6 +86,7 @@ const ItemsContextProvider: FC<ContextProps> = ({ children }) => {
     handleResetError,
     getOneProduct,
     createCar,
+    deleteCars,
   };
   return <itemContext.Provider value={value}>{children}</itemContext.Provider>; // 3.wrap with the provider
 };
