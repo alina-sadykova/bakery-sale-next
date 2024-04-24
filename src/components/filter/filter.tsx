@@ -8,7 +8,7 @@ export default function Filter() {
   const searchParams = useSearchParams();
   const pathName = usePathname();
   const [category, setCategory] = useState(
-    searchParams.get("category") || "all" //additional information in url after ? that has a key value (?title=hello&filter=suv)
+    searchParams.get("category") || "all" //a way to add additional information in url after ? that has a key value (?title=hello&filter=suv)
   );
   const router = useRouter();
 

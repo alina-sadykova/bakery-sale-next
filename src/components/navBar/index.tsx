@@ -17,6 +17,7 @@ import { useAuthContext } from "@/contexts/AuthContext";
 import Link from "next/link";
 import { pages } from "./data";
 import { usePathname } from "next/navigation";
+import SearchBar from "../search/search";
 
 function NavBar() {
   const { user, logout } = useAuthContext();
@@ -144,7 +145,7 @@ function NavBar() {
               </Button>
             ))}
           </Box>
-
+          {pathname === "/items" && <SearchBar />}
           <Box sx={{ flexGrow: 0 }}>
             {user ? (
               <Button onClick={logout} sx={{ color: "white" }}>

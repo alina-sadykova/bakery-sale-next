@@ -54,7 +54,7 @@ function EditCar() {
       reset(oneItem);
     }
   }, [oneItem]);
-  console.log(oneItem);
+
   return (
     <Box
       sx={{

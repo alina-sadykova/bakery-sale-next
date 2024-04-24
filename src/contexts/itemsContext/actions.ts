@@ -1,4 +1,5 @@
 import { Item } from "@/models/item";
+import { AxiosError } from "axios";
 
 export enum ItemsActionTypes {
   GET_ITEMS_REQUEST = "GET_ITEMS_REQUEST",
@@ -24,7 +25,7 @@ interface GetOneItemSuccess {
 
 interface GetItemsError {
   type: ItemsActionTypes.GET_ITEMS_ERROR;
-  error: string;
+  error: AxiosError;
 }
 
 interface ResetError {
@@ -58,7 +59,7 @@ export function getOneItemSuccess(item: Item): GetOneItemSuccess {
   };
 }
 
-export function getItemsError(error: string): GetItemsError {
+export function getItemsError(error: AxiosError): GetItemsError {
   return {
     type: ItemsActionTypes.GET_ITEMS_ERROR,
     error,

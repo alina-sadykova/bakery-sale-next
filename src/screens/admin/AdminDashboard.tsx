@@ -58,7 +58,6 @@ const AdminDashboard = () => {
   };
 
   const handleDeleteCar = (selectedCars: typeof rows) => {
-    console.log("delete", selectedCars);
     deleteCars(selectedCars.map((item) => item.id));
   };
 

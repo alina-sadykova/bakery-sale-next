@@ -1,11 +1,12 @@
 import { Item } from "@/models/item";
 import { ItemsActionTypes, ItemsActions } from "./actions";
+import { AxiosError } from "axios";
 
 export interface InitialState {
   items: Item[];
   oneItem: null | Item;
   loading: boolean;
-  error: null | string;
+  error: null | AxiosError;
 }
 
 export const initialState: InitialState = {

@@ -16,6 +16,7 @@ function ProductsList() {
     getProducts();
   }, [searchParams]);
 
+  const isNotFound = error?.response?.status === 404;
   return (
     <>
       <Filter />
@@ -34,9 +35,10 @@ function ProductsList() {
 
       {loading && <Loading />}
 
+      {isNotFound && <p>Item is not found</p>}
       <ErrorModal
-        message={`${error}`}
-        open={!!error}
+        message={`${error?.message}`}
+        open={!!error && !isNotFound}
         onClose={handleResetError}
       />
     </>

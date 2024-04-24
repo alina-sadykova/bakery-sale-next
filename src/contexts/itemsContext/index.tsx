@@ -7,7 +7,7 @@ import {
   getOneItemSuccess,
   resetError,
 } from "./actions";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { ContextProps } from "../AuthContext/types";
 import { BASE_URL } from "./consts";
 import { ItemWithoutId } from "@/models/item";
@@ -39,7 +39,10 @@ const ItemsContextProvider: FC<ContextProps> = ({ children }) => {
 
       dispatch(getItemsSuccess(response.data));
     } catch (error: any) {
-      dispatch(getItemsError(error.message as string));
+      if (error?.response?.status === 404) {
+        dispatch(getItemsSuccess([]));
+      }
+      dispatch(getItemsError(error as AxiosError));
     }
   }
 
@@ -53,7 +56,7 @@ const ItemsContextProvider: FC<ContextProps> = ({ children }) => {
 
       return data;
     } catch (error: any) {
-      dispatch(getItemsError(error.message as string));
+      dispatch(getItemsError(error as AxiosError));
     }
   }
 
@@ -67,7 +70,7 @@ const ItemsContextProvider: FC<ContextProps> = ({ children }) => {
       getProducts();
       return data;
     } catch (error: any) {
-      dispatch(getItemsError(error.message as string));
+      dispatch(getItemsError(error as AxiosError));
     }
   };
 
@@ -76,10 +79,10 @@ const ItemsContextProvider: FC<ContextProps> = ({ children }) => {
       const response = await Promise.all(
         carIDs.map((id) => axios.delete(`${BASE_URL}/items/${id}`))
       );
-      console.log(response);
+
       getProducts();
     } catch (error: any) {
-      dispatch(getItemsError(error.message as string));
+      dispatch(getItemsError(error as AxiosError));
     }
   };
 
@@ -87,10 +90,10 @@ const ItemsContextProvider: FC<ContextProps> = ({ children }) => {
     try {
       const { data } = await axios.put(`${BASE_URL}/items/${id}`, carData);
       getProducts();
-      console.log("Id", id, carData);
+
       return data;
     } catch (error: any) {
-      dispatch(getItemsError(error.message as string));
+      dispatch(getItemsError(error as AxiosError));
     }
   };
 
