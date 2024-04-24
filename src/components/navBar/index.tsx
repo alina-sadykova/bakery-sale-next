@@ -18,7 +18,7 @@ import Link from "next/link";
 import { pages } from "./data";
 import { usePathname } from "next/navigation";
 import SearchBar from "../search/search";
-
+import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 function NavBar() {
   const { user, logout } = useAuthContext();
   const pathname = usePathname();
@@ -48,7 +48,9 @@ function NavBar() {
     <AppBar position="static">
       <Container maxWidth="xl">
         <Toolbar disableGutters>
-          <AdbIcon sx={{ display: { xs: "none", md: "flex" }, mr: 1 }} />
+          <DirectionsCarIcon
+            sx={{ display: { xs: "none", md: "flex" }, mr: 2 }}
+          />
           <Typography
             variant="h6"
             noWrap
@@ -64,7 +66,7 @@ function NavBar() {
               textDecoration: "none",
             }}
           >
-            LOGO
+            MotorMart
           </Typography>
 
           <Box sx={{ flexGrow: 1, display: { xs: "flex", md: "none" } }}>
@@ -108,7 +110,9 @@ function NavBar() {
               ))}
             </Menu>
           </Box>
-          <AdbIcon sx={{ display: { xs: "flex", md: "none" }, mr: 1 }} />
+          <DirectionsCarIcon
+            sx={{ display: { xs: "flex", md: "none" }, mr: 2 }}
+          />
           <Typography
             variant="h5"
             noWrap
@@ -125,7 +129,7 @@ function NavBar() {
               textDecoration: "none",
             }}
           >
-            LOGO
+            MotorMart
           </Typography>
           <Box sx={{ flexGrow: 1, display: { xs: "none", md: "flex" } }}>
             {pages.map((page) => (
@@ -145,7 +149,7 @@ function NavBar() {
               </Button>
             ))}
           </Box>
-          {pathname === "/items" && <SearchBar />}
+          <Box sx={{ mr: 2 }}>{pathname === "/items" && <SearchBar />}</Box>
           <Box sx={{ flexGrow: 0 }}>
             {user ? (
               <Button onClick={logout} sx={{ color: "white" }}>

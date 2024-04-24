@@ -1,6 +1,6 @@
 "use client";
 import { useItemContext } from "@/contexts/itemsContext";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import React, { useEffect } from "react";
 import ProductItem from "./productItem";
 import Loading from "@/components/common/loading";
@@ -19,7 +19,10 @@ function ProductsList() {
   const isNotFound = error?.response?.status === 404;
   return (
     <>
-      <Filter />
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 1, mb: 5 }}>
+        <Filter />
+      </Box>
+
       <Box
         display="flex"
         flexWrap="wrap"
@@ -35,7 +38,11 @@ function ProductsList() {
 
       {loading && <Loading />}
 
-      {isNotFound && <p>Item is not found</p>}
+      {isNotFound && (
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Typography variant="h5">Item is not found</Typography>
+        </Box>
+      )}
       <ErrorModal
         message={`${error?.message}`}
         open={!!error && !isNotFound}
