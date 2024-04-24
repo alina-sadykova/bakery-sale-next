@@ -1,4 +1,4 @@
-import ItemDetails from "@/components/screens/item-details/ItemDetails";
+import ItemDetails from "@/screens/item-details/ItemDetails";
 import type { Metadata } from "next";
 import React from "react";
 

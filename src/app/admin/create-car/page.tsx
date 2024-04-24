@@ -1,4 +1,4 @@
-import CreateCar from "@/components/screens/create-car";
+import CreateCar from "@/screens/create-car";
 import React from "react";
 
 function CreateCarPage() {

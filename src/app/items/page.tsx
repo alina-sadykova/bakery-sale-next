@@ -1,4 +1,4 @@
-import ProductsList from "@/components/screens/items/ProductsList";
+import ProductsList from "@/screens/items/ProductsList";
 import React from "react";
 import type { Metadata } from "next";
 

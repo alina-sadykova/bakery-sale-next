@@ -1,4 +1,4 @@
-import AdminDashboard from "@/components/screens/admin/AdminDashboard";
+import AdminDashboard from "@/screens/admin/AdminDashboard";
 import React from "react";
 
 const AdminPage = () => {
