@@ -19,3 +19,5 @@ export const itemCategories = [
   ItemCategory.suv,
   ItemCategory.truck,
 ];
+
+export const itemCategorisFilter = ["all", ...itemCategories];

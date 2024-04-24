@@ -11,6 +11,7 @@ import axios from "axios";
 import { ContextProps } from "../AuthContext/types";
 import { BASE_URL } from "./consts";
 import { ItemWithoutId } from "@/models/item";
+import { useSearchParams } from "next/navigation";
 
 interface ItemContext extends InitialState {
   getProducts: () => void;
@@ -26,13 +27,15 @@ const itemContext = createContext<ItemContext>({} as ItemContext); // 1.create c
 export const useItemContext = () => useContext(itemContext); // 2.create hook
 
 const ItemsContextProvider: FC<ContextProps> = ({ children }) => {
-  const [state, dispatch] = useReducer(itemsReducer, initialState); // stare: initial state, dispatch: setState. two arguments in useReducer: reducer function, initial state
-
+  const [state, dispatch] = useReducer(itemsReducer, initialState); // state: initial state, dispatch: setState. two arguments in useReducer: reducer function, initial state
+  const searchParams = useSearchParams();
   async function getProducts() {
     try {
       dispatch(getItemsRequest()); // loading
 
-      const response = await axios.get(`${BASE_URL}/items`); // API call
+      const response = await axios.get(
+        `${BASE_URL}/items?${searchParams.toString()}`
+      ); // API call
 
       dispatch(getItemsSuccess(response.data));
     } catch (error: any) {
